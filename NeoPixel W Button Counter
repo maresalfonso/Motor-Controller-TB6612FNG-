@@ -1,0 +1,83 @@
+#include <Adafruit_NeoPixel.h>
+  #define PIN 6
+
+
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(1,PIN,NEO_RGB+NEO_KHZ800);
+int timer = 50;
+
+const int buttonPin1 = 2 ;
+const int buttonPin2 = 12;
+int buttonState1 = 0;
+int buttonState2 = 1;
+int lastButtonState = 0;
+int buttonPushCounter = 0;
+
+void setup() 
+{  
+  strip.begin();
+  strip.show();// intitalize all pixels to "off"
+  strip.setBrightness(64);  
+  pinMode(buttonPin1, INPUT_PULLUP);
+  pinMode(buttonPin2, INPUT_PULLUP);
+  pinMode (PIN, OUTPUT);
+  
+  Serial.begin(9600);
+}
+
+//uint32_t magenta = strip.Color(255, 0, 255);
+int counter = 0;
+int result =0;
+
+
+void loop() 
+{
+  //uint16_t n=strip.numPixel(); 
+  uint16_t m = 0;
+  buttonState1= digitalRead(buttonPin1);
+  buttonState2= digitalRead(buttonPin2);
+ 
+  
+  if ((buttonState1==LOW)&&(buttonState2==HIGH))
+  {
+   
+    // inc counter
+    counter = counter + 1;
+    Serial.println(counter);
+ 
+    delay(360);
+    //......
+  
+  } 
+  else if ((buttonState2==LOW)&&(buttonState1==HIGH))
+  {
+    
+     // flash counter # of times
+   // (counter % 4 ==0);
+       //for(counter # of times)
+      
+    for (int j=1; j <=counter; j++)
+     {   
+       for (int i=0; i <= 255; i = i+10)// i++ = i+1
+             
+        {   
+          strip.setPixelColor(m,strip.Color(i, i, i));  
+          strip.show();
+          delay(timer); 
+        }
+        Serial.println(j);
+     }   
+    counter=0;
+      //Resset counter 
+  }
+  
+  else if ((buttonState1==LOW) && (buttonState2==LOW))   
+ {
+    // ...
+ }
+  
+  else 
+  { 
+    strip.setPixelColor(m,strip.Color(0, 0, 0));
+    strip.show();    
+  }    
+}
