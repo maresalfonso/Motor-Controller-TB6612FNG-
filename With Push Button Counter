@@ -1,0 +1,157 @@
+/* Define pinout of Arduino to match physical connections */
+#define PWMA 3
+#define AIN1 9
+#define AIN2 10
+#define PWMB 5
+#define BIN2 7
+#define BIN1 4 
+#define STBY 6
+#define PIN 6
+
+
+
+int timer = 50;
+
+const int buttonPin1 = 2 ;
+const int buttonPin2 = 12;
+int buttonState1 = 0;
+int buttonState2 = 1;
+int lastButtonState = 0;
+int buttonPushCounter = 0;
+
+ 
+void setup() {
+  /* Define all 7 pins as outputs to the TB6612FNG driver */
+  pinMode(PWMA,OUTPUT);
+  pinMode(AIN1,OUTPUT);//Motor A
+  pinMode(AIN2,OUTPUT);
+  pinMode(BIN1,OUTPUT);//Motor B
+  pinMode(BIN2,OUTPUT);
+  pinMode(STBY,OUTPUT); 
+  
+  pinMode(buttonPin1, INPUT_PULLUP);
+  pinMode(buttonPin2, INPUT_PULLUP);
+  pinMode (PIN, OUTPUT);
+  
+  Serial.begin(9600);
+}
+
+int counter = 0;
+int result =0;
+
+
+void loop() {
+   buttonState1= digitalRead(buttonPin1);
+   buttonState2= digitalRead(buttonPin2);
+
+  
+  if ((buttonState1==LOW)&&(buttonState2==HIGH))
+  {
+   
+    // inc counter
+    counter = counter + 1;
+    Serial.println(counter);
+ 
+    delay(360);
+    //......
+  }
+
+  
+  else if ((buttonState2==LOW)&&(buttonState1==HIGH))
+  {  
+    // flash counter # of times
+    // (counter % 4 ==0);
+    //for(counter # of times)  
+     startUp(); 
+     goForward();
+     delay(counter*1000);
+     Serial.println(counter);
+     brakes();
+     
+     counter =0;  //Resset counter 
+  
+  }
+  
+  else if ((buttonState1==LOW) && (buttonState2==LOW))
+  {
+  
+  }
+  //startUp();
+  //goForward();// UNCOMMENT THIS TO CALL THE COMMAND!
+  //delay(500);
+  //goBackwards();//If L LED light flashes, press reset button multiple times  
+  //delay(500);
+  //rotateRight();
+  //delay(500);
+  //rotateLeft();
+  //delay(500);
+  else
+  {
+    
+  }
+}
+ 
+/* Function definitions */
+/* Due to variations in motor output, it was found that */
+/* a duty cycle of 233 on the left motor and 255 on the */
+/* right motor is necessary for approximately straight  */
+/* line, full speed travel                              */
+/* Testing revealed Clusterbot will do 27 rotations per */
+/* minute, with motors turning in opposite direction at */
+/* full duty cycle.  This "constant" was used to        */
+/* determine the length of time to turn to make 90, 180,*/
+/* and 360 degree turns.                                */
+ 
+void goForward()// This code has the polarity switched, woops!
+{
+  digitalWrite (AIN1,HIGH); //There needs to be an offset of voltage, High and low, cannot be both low or high. 
+  digitalWrite (AIN2,LOW); //Creates mini magnetic fields to run the motor.
+  analogWrite (PWMA,200); 
+  digitalWrite (BIN1,LOW);
+  digitalWrite (BIN2,HIGH);
+  analogWrite (PWMB,200);
+}
+
+void goBackwards()
+{
+  digitalWrite (AIN1,LOW);
+  digitalWrite (AIN2,HIGH);
+  analogWrite (PWMA,200);
+  digitalWrite (BIN1,HIGH);
+  digitalWrite (BIN2,LOW);
+  analogWrite  (PWMB,200);
+}
+
+void rotateRight()
+{
+  digitalWrite (AIN1,HIGH);
+  digitalWrite (AIN2,LOW);
+  analogWrite  (PWMA,200);
+  digitalWrite (BIN1,HIGH);
+  digitalWrite (BIN2,LOW);
+  analogWrite  (PWMB,200);
+}
+void rotateLeft ()
+{
+  digitalWrite (AIN1,LOW);
+  digitalWrite (AIN2,HIGH);
+  analogWrite  (PWMA,200);
+  digitalWrite (BIN1,LOW);
+  digitalWrite (BIN2,HIGH);
+  analogWrite  (PWMB,200);
+}
+
+void brakes     ()
+{
+  digitalWrite (AIN1,HIGH);
+  digitalWrite (AIN2,HIGH);
+  analogWrite  (PWMA,200);
+  digitalWrite (BIN1,HIGH);
+  digitalWrite (BIN2,HIGH);
+  analogWrite  (PWMB,200);
+}
+void startUp()
+{
+    digitalWrite(STBY,HIGH); 
+}
+
