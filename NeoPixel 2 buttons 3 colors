@@ -66,6 +66,10 @@ void loop()
         
         }
     }
-       
+  else 
+    { 
+      strip.setPixelColor(m,strip.Color(0, 0, 0));
+      strip.show();    
+    }       
     
 }
